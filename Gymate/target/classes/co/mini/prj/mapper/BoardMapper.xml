@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.mini.prj.mapper.BoardMapper">
+
+	<!-- 글번호 -->
+
+	<select id="boardSelectList"
+		resultType="co.mini.prj.board.service.BoardVO">
+		SELECT * FROM BOARD
+		<if test="str=='NOTICE'">
+			WHERE BOARD_TYPE = 'NOTICE'
+		</if>
+		<if test="searchMenu!='MENU'">
+			<if test="searchMenu=='TITLE'"> WHERE BOARD_TITLE LIKE '%'||#{searchVal}||'%' </if>
+			<if test="searchMenu=='WRITER'"> WHERE BOARD_WRITER LIKE '%'||#{searchVal}||'%'</if>
+			<if test="searchMenu=='CONTENT'"> WHERE BOARD_CONTENT LIKE '%'||#{searchVal}||'%'</if>
+		</if>
+		ORDER BY BOARD_NUM DESC
+	</select>
+
+
+	<!-- 글 작성자 -->
+	<select id="boardSelect"
+		resultType="co.mini.prj.board.service.BoardVO">
+		SELECT * FROM BOARD WHERE BOARD_NUM = #{boardNum}
+	</select>
+
+	<select id="boardNoticeSelect"
+		resultType="co.mini.prj.board.service.BoardVO">
+		SELECT * FROM (SELECT * FROM BOARD WHERE BOARD_TYPE='NOTICE' ORDER BY
+		BOARD_NUM DESC) WHERE ROWNUM<![CDATA[ <= ]]>3
+	</select>
+
+	<insert id="boardInsert"
+		parameterType="co.mini.prj.board.service.BoardVO">
+		<selectKey keyProperty="boardNum" resultType="int"
+			order="BEFORE">
+			SELECT CASE WHEN MAX(BOARD_NUM) IS NULL THEN 1 ELSE
+			MAX(BOARD_Num) + 1 END AS ID
+			FROM BOARD
+		</selectKey>
+		INSERT INTO
+		BOARD(BOARD_NUM,BOARD_TITLE,BOARD_WRITER,BOARD_CONTENT,BOARD_TYPE)
+		VALUES(#{boardNum}, #{boardTitle},
+		#{boardWriter},#{boardContent},
+		#{boardType})
+	</insert>
+
+	<update id="boardUpdate"
+		parameterType="co.mini.prj.board.service.BoardVO">
+		UPDATE BOARD SET BOARD_TITLE = #{boardTitle},
+		BOARD_CONTENT = #{boardContent}
+		WHERE BOARD_NUM = #{boardNum}
+	</update>
+
+	<delete id="boardDelete"
+		parameterType="co.mini.prj.board.service.BoardVO">
+		DELETE FROM BOARD WHERE BOARD_NUM = #{boardNum}
+	</delete>
+
+	<update id="boardHitUpdate"
+		parameterType="co.mini.prj.board.service.BoardVO">
+		UPDATE BOARD SET BOARD_HIT = BOARD_HIT +1 WHERE
+		BOARD_NUM =
+		#{num}
+	</update>
+
+	<select id="boardGoodExist" resultType="int">
+		SELECT
+		<if test="memberNum==0"> COUNT(MEMBER_NUM) FROM BOARDGOOD WHERE
+			BOARD_NUM=#{boardNum}
+		</if>
+		<if test="memberNum > 0">CASE WHEN COUNT(MEMBER_NUM)>0 THEN 1 ELSE 0 END AS ISGOOD
+			FROM BOARDGOOD
+			WHERE BOARD_NUM=#{boardNum} AND MEMBER_NUM=#{memberNum}
+		</if>
+	</select>
+
+	<insert id="boardGoodInsert">
+		INSERT INTO BOARDGOOD
+		VALUES(#{memberNum},#{boardNum})
+	</insert>
+
+	<delete id="boardGoodDelete">
+		DELETE FROM BOARDGOOD WHERE MEMBER_NUM=#{memberNum}
+		AND
+		BOARD_NUM=#{boardNum}
+	</delete>
+
+	<delete id="boardGoodDeleteAll">
+		DELETE FROM BOARDGOOD WHERE BOARD_NUM =#{num}
+	</delete>
+
+
+</mapper>

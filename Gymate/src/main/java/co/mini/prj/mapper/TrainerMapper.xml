@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.mini.prj.mapper.TrainerMapper">
+<select id="trainerSelect" resultType="co.mini.prj.trainer.service.TrainerVO">
+
+SELECT M.MEMBER_NAME, M.MEMBER_AGE, TD.TRAINER_MEMBER_NUM, TD.TRAINER_PRIZE, TD.TRAINER_CAREER, TD.TRAINER_SNS, TD.TRAINER_ATTACH_DIR
+FROM MEMBER M, TRAINERDATA TD, TRAINER TN 
+WHERE TD.TRAINER_MEMBER_NUM = TN.MEMBER_NUM
+AND   M.MEMBER_NUM = TN.MEMBER_NUM
+
+</select>
+
+</mapper>
+ 

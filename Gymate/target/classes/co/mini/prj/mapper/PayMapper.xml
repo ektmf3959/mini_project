@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.mini.prj.mapper.PayMapper">
+	<select id="paySelectListT"
+		resultType="co.mini.prj.service.PayVO">
+		SELECT *
+		FROM PAY
+		WHERE MEMBER_NUM = #{memberNum} and
+		PAY_AUTHOR = 'SELL'
+		ORDER BY PAY_NUM DESC
+	</select>
+
+	<select id="paySelectListC"
+		resultType="co.mini.prj.service.PayVO">
+		SELECT *
+		FROM PAY
+		WHERE MEMBER_NUM = #{memberNum} and
+		PAY_AUTHOR = 'BUY'
+		ORDER BY PAY_NUM DESC
+	</select>
+
+	<select id="paySelectListProduct"
+		resultType="co.mini.prj.product.service.ProductVO">
+		SELECT P.PRODUCT_NAME, A.PAY_NUM, P.PRODUCT_NUM, P.PRICE
+		FROM PRODUCT P, PAY A
+		WHERE P.PRODUCT_NUM IN (SELECT PRODUCT_NUM
+		FROM PAY
+		WHERE MEMBER_NUM =
+		#{memberNum} AND PAY_AUTHOR = 'BUY')
+	</select>
+
+	<select id="paySelect" resultType="co.mini.prj.service.PayVO">
+		SELECT *
+		FROM PAY
+		WHERE
+		PAY_NUM =
+		#{payNum} AND PAY_AUTHOR = 'BUY'
+	</select>
+	
+	<select id="paySelectT" resultType="co.mini.prj.service.PayVO">
+		SELECT *
+		FROM PAY
+		WHERE
+		PAY_NUM =
+		#{payNum} AND PAY_AUTHOR = 'SELL'
+	</select>
+
+	<insert id="payInsert" parameterType="co.mini.prj.service.PayVO">
+		<selectKey keyProperty="payNum" resultType="int"
+			order="BEFORE">
+			SELECT CASE WHEN MAX(PAY_NUM) IS NULL THEN 1 ELSE MAX(PAY_NUM)
+			+ 1 END AS
+			PN FROM PAY
+		</selectKey>
+		INSERT INTO PAY VALUES (#{payNum}, #{payPlan}, #{price}, #{memberNum},
+		#{productNum}, SYSDATE, 'BUY')
+	</insert>
+	
+	<insert id="payInsert1" parameterType="co.mini.prj.service.PayVO">
+		<selectKey keyProperty="payNum" resultType="int"
+			order="BEFORE">
+			SELECT CASE WHEN MAX(PAY_NUM) IS NULL THEN 1 ELSE MAX(PAY_NUM)
+			END AS
+			PN FROM PAY
+		</selectKey>
+		INSERT INTO PAY VALUES (#{payNum}, #{payPlan}, #{price}, 0,
+		#{productNum}, SYSDATE, 'SELL')
+	</insert>
+	
+	<update id="payUpdate">
+		UPDATE PAY
+		<set>
+			<if test="payPlan != null">PAY_PLAN = #{payPlan}, </if>
+			<if test="price != null">PRICE = #{price}</if>
+		</set>
+		WHERE PAY_NUM = #{payNum}
+	</update>
+
+	<delete id="payDelete">
+		DELETE FROM PAY WHERE PAY_NUM = #{payNum}
+	</delete>
+</mapper>

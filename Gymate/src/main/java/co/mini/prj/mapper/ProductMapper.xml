@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="co.mini.prj.mapper.ProductMapper">
+
+<select id="productSelectList" resultType="co.mini.prj.product.service.ProductVO">
+	<!-- 전체목록 -->
+	SELECT * FROM PRODUCT WHERE UPPER(PRODUCT_TYPE)= UPPER('product') ORDER BY PRODUCT_NUM DESC
+</select>
+
+<select id="productCount" resultType="int">
+	SELECT COUNT(PRODUCT_NUM)+1 AS TOTAL FROM PRODUCT
+</select>
+
+<select id="productSelect" resultType="co.mini.prj.product.service.ProductVO">
+	<!-- 선택 목록 -->
+	SELECT * 
+	FROM PRODUCT 
+	WHERE PRODUCT_NUM = #{productNum}
+</select>
+
+      
+<select id="inquireList" resultType="co.mini.prj.product.service.ProductVO">
+	SELECT * 
+	FROM PRODUCT 
+	WHERE UPPER(PRODUCT_TYPE)=UPPER('trainer')
+    AND UPPER(PT_STATE)= UPPER('false')
+	ORDER BY PRODUCT_NUM DESC
+</select>    
+
+<select id="inquireSelect" resultType="co.mini.prj.product.service.ProductVO">
+	SELECT * 
+	FROM PRODUCT 
+	WHERE UPPER(PRODUCT_TYPE)=UPPER('trainer')
+    AND UPPER(PT_STATE)= UPPER('false')
+    AND PRODUCT_NUM = #{productNum}
+	ORDER BY PRODUCT_NUM DESC
+</select>
+   
+<insert id="productInsert">
+	<selectKey keyProperty="productNum" resultType="int" order="BEFORE">
+		SELECT CASE WHEN MAX(PRODUCT_NUM) IS NULL THEN 1 ELSE MAX(PRODUCT_NUM) + 1 END AS PRODUCT_NUM
+		FROM PRODUCT
+	</selectKey>
+		INSERT INTO PRODUCT (PRODUCT_NUM,PRICE,COUNT,PRODUCT_NAME,PRODUCT_TYPE,EXPLAIN,PRODUCT_ATTACH,PRODUCT_ATTACH_DIR)
+		VALUES(#{productNum},#{price},#{count},#{productName},'product',#{explain},#{productAttach},#{productAttachDir})
+</insert>
+	
+<insert id="ptInsert" >
+	<selectKey keyProperty="productNum" resultType="int" order="BEFORE">
+		SELECT CASE WHEN MAX(PRODUCT_NUM) IS NULL THEN 1 ELSE MAX(PRODUCT_NUM) + 1 END AS PRODUCT_NUM
+		FROM PRODUCT
+	</selectKey>
+	INSERT INTO PRODUCT (PRODUCT_NUM,PRICE,COUNT,PRODUCT_NAME,PRODUCT_TYPE,PT_STATE,EXPLAIN,PRODUCT_ATTACH,PRODUCT_ATTACH_DIR)
+	VALUES (#{productNum},#{price},#{count},#{productName},'trainer','false',#{explain},#{productAttach},#{productAttachDir})
+</insert>
+
+<update id="inquireUpdate">
+	UPDATE PRODUCT
+	SET PT_STATE = UPPER('true')
+</update>
+
+<update id="productUpdate">
+	<selectKey keyProperty="price" resultType="int" order="BEFORE">
+		SELECT PRICE FROM PRODUCT WHERE PRODUCT_NUM = #{productNum}
+	</selectKey>
+	UPDATE PRODUCT
+	<set>
+	<if test="price != null">PRICE = #{price},</if>
+	<if test="count != null">COUNT = #{count},</if>
+	<if test="productName != null">PRODUCT_NAME = #{productName},</if>
+	<if test="explain != null">EXPLAIN = #{explain},</if>
+	<if test="productAttach != null">PRODUCT_ATTACH = #{productAttach},</if>	
+	<if test="productAttachDir != null">PRODUCT_ATTACH_DIR = #{productAttachDir}</if>	
+	</set>
+		WHERE PRODUCT_NUM = #{productNum}
+</update>
+
+<update id="productHitUpdate" parameterType="int">
+	 UPDATE product SET HIT = HIT + 1 WHERE product_num = #{num}
+</update>
+
+<delete id="productDelete">
+	DELETE FROM PRODUCT WHERE PRODUCT_NUM = #{productNum}
+</delete>
+
+</mapper>
