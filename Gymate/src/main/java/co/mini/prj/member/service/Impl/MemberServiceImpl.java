@@ -86,25 +86,21 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public MemberVO myInfo(MemberVO vo) {
-		// mypage->개인정보
 		return map.myInfo(vo);
 	}
 
 	@Override
 	public List<Map<String, Object>> trainerSelectList() {
-		// 조인문
 		return map.trainerSelectList();
 	}
 
 	@Override
 	public List<Map<String, Object>> trainerSelect(int num) {
-		// Pt 상세정보 1건
 		return map.trainerSelect(num);
 	}
 
 	@Override
-	public int trainerProductUpdate(int num) {
-		// trainerData의 productNum 업데이트
+	public int trainerProductUpdate(int num) {		
 		return map.trainerProductUpdate(num);
 	}
 

@@ -42,11 +42,10 @@ public class MemberLogin implements Command {
          session.setAttribute("memberAge", vo.getMemberAge());
          session.setAttribute("memberTel", vo.getMemberTel());
          session.setAttribute("memberAuthor", vo.getMemberAuthor());
-         session.setAttribute("message", vo.getMemberName() + "�솚�쁺�빀�땲�떎.");
+         session.setAttribute("message", vo.getMemberName() + "님 환영합니다.");
          
          
          voc = dao.memberSelectData(vo.getMemberNum());
-         System.out.println("媛�" + voc);
          if (voc != null) {
             session.setAttribute("memberAddress", voc.getMemberAddress());
             session.setAttribute("memberHeight", voc.getMemberHeight());
@@ -62,7 +61,7 @@ public class MemberLogin implements Command {
          viewPage = "main/main";
          
          }else {
-                request.setAttribute("message", "�븘�씠�뵒 �삉�뒗 �뙣�뒪�썙�뱶媛� ���졇�뒿�땲�떎.");
+                request.setAttribute("message", "회원가입이 필요합니다.");
 
       }
          return viewPage;

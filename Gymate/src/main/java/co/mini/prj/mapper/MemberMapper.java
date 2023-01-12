@@ -18,7 +18,7 @@ public interface MemberMapper {
 
 	MemberVO memberSearch(MemberVO vo);
 	
-	MemberVO myInfo(MemberVO vo); // Mypage -> 개인정보
+	MemberVO myInfo(MemberVO vo);
 
 	int memberInsert(MemberVO vo);
 
@@ -36,9 +36,10 @@ public interface MemberMapper {
 
 	boolean isMemberId(String id);
 
-	List<Map<String,Object>> trainerSelectList(); // Join결과에 대해 별도 VO를 생성하지 않고 사용하기위함
+	List<Map<String,Object>> trainerSelectList();
 	
-	List<Map<String,Object>> trainerSelect(int num); // Pt 상세정보 1건
+	List<Map<String,Object>> trainerSelect(int num);
 	
-	int trainerProductUpdate(int num); // trainerData의 productNum 업데이트
+	int trainerProductUpdate(int num);
+
 }
